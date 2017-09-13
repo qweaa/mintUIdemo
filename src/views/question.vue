@@ -8,7 +8,7 @@
 export default {
     data(){
         return {
-            title:"hello miny-ui in zhuanlan"
+            title:"hello miny-ui in question-page"
         }
     }
 }
