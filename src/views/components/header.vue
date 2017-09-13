@@ -1,29 +1,37 @@
 <style scoped>
+    .mint-header{
+        font-size: 16px;
+    }
     .popup-body{
         width: 100%;
         height: 100%;
         background-color: #fff;
+    }
+    .mint-popup{
+        width: 60%;
+        height: 100%;
+    }
+    .userImg img{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
     }
 </style>
 
 <template>
     <div class="header">
         <mt-header :title="title">
-            <!-- <router-link to="/" slot="left" v-if="!isHome">
-                <mt-button icon="back">返回</mt-button>
-            </router-link> -->
-            <mt-button icon="more" slot="right" @click="popupVisible = !popupVisible"></mt-button>
-        </mt-header>
-        <mt-popup v-model="popupVisible" position="left">
-            <div class="popup-body">
+            <!-- <mt-button icon="more" slot="right" @click="popupVisible = !popupVisible"></mt-button> -->
+            <div class="userImg" slot="right" @click="popupVisible = !popupVisible">
+                <img src="../../images/userDefault.jpg" alt="">
             </div>
+        </mt-header>
+        <mt-popup v-model="popupVisible" position="right">
+            
         </mt-popup>
     </div>
 </template>
 <script>
-// import Vue from 'vue';
-// import {Header} from 'mint-ui';
-// Vue.component(Header.name, Header);
 
 export default {
     data() {
