@@ -22,7 +22,7 @@
         </mt-tab-item>
         <mt-tab-item id="b">
             <router-link to="answer">
-                <span class="fa fa-tags"></span>答案
+                <span class="fa fa-tags"></span>问答
             </router-link>
         </mt-tab-item>
         <mt-tab-item id="c">

@@ -2,7 +2,6 @@
 .app {
     padding-bottom: 46px;
 }
-
 .mint-loadmore-content ul li {
     border-bottom: 1px solid #ccc;
     line-height: 24px;
@@ -31,6 +30,7 @@
 
 <template>
     <div class="app">
+        <v-header :title="title"></v-header>
         <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
             <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
                 <li v-for="(item, index) in list" :key="index">{{ item }}</li>
@@ -46,15 +46,16 @@
 </template>
 
 <script>
-// import Footer from './components/footer'
+import Header from './components/header'
 export default {
     data() {
         return {
             list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
             topStatus: '',
             allLoaded: false,
-            loading:false
-        };
+            loading:false,
+            title:"专栏"
+        }
     },
     methods: {
         handleTopChange(status) {
@@ -82,8 +83,8 @@ export default {
             }, 2500);
         }
     },
-    // components:{
-    //     vFooter:Footer
-    // }
+    components:{
+        vHeader:Header
+    }
 };
 </script>

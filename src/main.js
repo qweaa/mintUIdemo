@@ -47,11 +47,11 @@ new Vue({
     render: h => h(App)
 });
 
-new Vue({
-    el: '#header',
-    router: router,
-    render: h => h(Header)
-});
+// new Vue({
+//     el: '#header',
+//     router: router,
+//     render: h => h(Header)
+// });
 new Vue({
     el: '#footer',
     router: router,
