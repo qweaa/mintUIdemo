@@ -2,18 +2,30 @@
     .mint-header{
         font-size: 16px;
     }
-    .popup-body{
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-    }
     .mint-popup{
         width: 60%;
         height: 100%;
+        padding: 15px;
     }
     .userImg img{
         width: 30px;
         height: 30px;
+        border-radius: 50%;
+    }
+    .bottom-action{
+        position: absolute;
+        bottom: 15px;
+        width: calc(100% - 30px);
+    }
+    .bottom-action button{
+        width: 100%;
+    }
+    .head-portrait{
+        text-align: center;
+    }
+    .head-portrait img{
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
     }
 </style>
@@ -27,7 +39,13 @@
             </div>
         </mt-header>
         <mt-popup v-model="popupVisible" position="right">
-            
+            <div class="head-portrait">
+                <img src="../../images/userDefault.jpg" alt="">
+            </div>
+            <div class="bottom-action">
+                <mt-button type="primary" size="small" v-show="isLogin">登陆</mt-button>
+                <mt-button type="danger" size="small" v-show="!isLogin">退出登陆</mt-button>
+            </div>
         </mt-popup>
     </div>
 </template>
@@ -37,7 +55,8 @@ export default {
     data() {
         return {
             title: "",
-            popupVisible : false
+            popupVisible : false,
+            isLogin:false
         }
     },
     methods : {

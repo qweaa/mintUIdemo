@@ -14,7 +14,7 @@
 
 
 <template>
-    <mt-tabbar v-model="selected">
+    <mt-tabbar v-model="selected" :fixed="true">
         <mt-tab-item id="a">
             <router-link to="/">
                 <span class="fa fa-navicon"></span>专栏
