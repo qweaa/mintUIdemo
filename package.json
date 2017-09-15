@@ -20,7 +20,9 @@
     "iview": "^2.0.0-rc.13",
     "mint-ui": "^2.2.9",
     "vue": "^2.2.6",
-    "vue-router": "^2.3.1"
+    "vue-router": "^2.3.1",
+    "vuex": "^2.4.0",
+    "zhihu": "^1.4.1"
   },
   "devDependencies": {
     "autoprefixer-loader": "^2.0.0",

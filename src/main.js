@@ -14,6 +14,8 @@ import 'mint-ui/lib/style.css'
 import './css/common.css'
 
 
+// import zhihu from "zhihu";
+
 Vue.use(VueRouter);
 
 

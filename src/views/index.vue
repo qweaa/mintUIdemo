@@ -5,10 +5,9 @@
 
 .mint-loadmore-content ul li {
     border-bottom: 1px solid #ccc;
-    line-height: 24px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    text-align: center;
+}
+.mint-loadmore-content ul li img{
+    border-radius: 50%;
 }
 
 .mint-loadmore-content ul li:hoder {
@@ -38,7 +37,9 @@
         <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
             <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
                 <li v-for="(item, index) in list" :key="index">
-                    <mt-cell :title="item" to="/article" is-link value="带链接"></mt-cell>
+                    <mt-cell :title="item.title" to="/article" is-link value="">
+                        <img :src="item.url" alt="">
+                    </mt-cell>
                 </li>
             </ul>
             <div class="loadingAnimate">
@@ -58,7 +59,7 @@ import Header from './components/header'
 export default {
     data() {
         return {
-            list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+            list: null,
             topStatus: '',
             allLoaded: false,
             loading: false,
@@ -82,17 +83,32 @@ export default {
         },
         loadMore() {
             this.loading = true;
-            setTimeout(() => {
-                let last = this.list[this.list.length - 1];
-                for (let i = 1; i <= 10; i++) {
-                    this.list.push(last + i);
-                }
-                this.loading = false;
-            }, 2500);
+            axios.get("http://127.0.0.1:8888?m=zhuanlan").then((data) => {
+                console.log(data)
+                this.list = data.data;
+                console.log(this.list)
+            }).catch((err) => {
+                console.log(err)
+            })
+            // setTimeout(() => {
+            //     let last = this.list[this.list.length - 1];
+            //     for (let i = 1; i <= 10; i++) {
+            //         this.list.push(last + i);
+            //     }
+            //     this.loading = false;
+            // }, 2500);
         }
     },
     components: {
         vHeader: Header
     }
 };
+import axios from "axios";
+// axios.get("http://127.0.0.1:8888?m=zhuanlan").then((data) => {
+//     console.log(data)
+//     Vue.list = data;
+// }).catch((err) => {
+//     console.log(err)
+// })
+
 </script>
