@@ -22,5 +22,11 @@ const routers = [{
         title: '话题'
     },
     component: (resolve) => require(['./views/comments.vue'], resolve)
+},{
+    path: '/article',
+    meta: {
+        title: '文章'
+    },
+    component: (resolve) => require(['./views/article.vue'], resolve)
 }];
 export default routers;

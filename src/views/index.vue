@@ -2,6 +2,7 @@
 .app {
     padding-bottom: 46px;
 }
+
 .mint-loadmore-content ul li {
     border-bottom: 1px solid #ccc;
     line-height: 24px;
@@ -13,17 +14,20 @@
 .mint-loadmore-content ul li:hoder {
     background-color: #ccc;
 }
-.loadingAnimate{
+
+.loadingAnimate {
     text-align: center;
     font-size: 24px;
     line-height: 30px;
 }
-.mint-loadmore-top{
+
+.mint-loadmore-top {
     text-align: center;
 }
-.mint-loadmore-top span{
+
+.mint-loadmore-top span {
     display: inline-block;
-    color:#26a2ff;
+    color: #26a2ff;
 }
 </style>
 
@@ -33,9 +37,13 @@
         <v-header :title="title"></v-header>
         <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
             <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
-                <li v-for="(item, index) in list" :key="index">{{ item }}</li>
+                <li v-for="(item, index) in list" :key="index">
+                    <mt-cell :title="item" to="/article" is-link value="带链接"></mt-cell>
+                </li>
             </ul>
-            <div class="loadingAnimate"><mt-spinner type="triple-bounce" v-show="loading" color="#26a2ff"></mt-spinner></div>
+            <div class="loadingAnimate">
+                <mt-spinner type="triple-bounce" v-show="loading" color="#26a2ff"></mt-spinner>
+            </div>
             <div slot="top" class="mint-loadmore-top">
                 <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
@@ -53,8 +61,8 @@ export default {
             list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
             topStatus: '',
             allLoaded: false,
-            loading:false,
-            title:"专栏"
+            loading: false,
+            title: "专栏"
         }
     },
     methods: {
@@ -83,8 +91,8 @@ export default {
             }, 2500);
         }
     },
-    components:{
-        vHeader:Header
+    components: {
+        vHeader: Header
     }
 };
 </script>
