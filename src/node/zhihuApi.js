@@ -1,7 +1,7 @@
 let http = require("http");
 let url = require("url");
 let zhihu = require('zhihu');
-
+let requestsss = require('request');
 
 
 
@@ -10,7 +10,6 @@ let zhihu = require('zhihu');
 
 
 let username = 'shanejs';
-
 
 
 http.createServer(function (request, response) {
@@ -25,26 +24,20 @@ http.createServer(function (request, response) {
 
             let params = url.parse(request.url, true).query;
             if (params.m === "zhuanlan") {
-                zhihu.Post.page('koukou', {
+                zhihu.Post.page(params.page, {
                     limit: params.limit,
                     offset: params.offset
                 }).then(function (list) {
                     response.end(JSON.stringify(list));
                 });
             }else if (params.m === "default") {
-                http.get(reqUrl, (sres) => {
-                    if (sres.statusCode !== 200) {
-                        // throw error
+                requestsss('https://zhuanlan.zhihu.com/api/recommendations/columns?limit=10&offset=0&seed=46', function (error, res, body) {
+                    if (!error && res.statusCode == 200) {
+                        response.end(JSON.stringify(body)); // 输出请求到的body
+                    }else{
+                        console.log(error)
                     }
-                    var rawData = '';
-                    sres.setEncodeng('binary');
-                    sres.on('data', (chunk) => {
-                        rawData += chunk;
-                    })
-                    sres.on('end', () => {
-                        // callback here
-                    })
-                })
+                });
             }else {
                 response.end("缺少参数m或m值错误！");
             }

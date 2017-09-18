@@ -23,10 +23,16 @@ const routers = [{
     },
     component: (resolve) => require(['./views/comments.vue'], resolve)
 },{
+    path: '/zhuanlanList',
+    meta: {
+        title: '专栏列表'
+    },
+    component: (resolve) => require(['./views/zhuanlan/list.vue'], resolve)
+},{
     path: '/article',
     meta: {
         title: '文章'
     },
-    component: (resolve) => require(['./views/article.vue'], resolve)
+    component: (resolve) => require(['./views/zhuanlan/article.vue'], resolve)
 }];
 export default routers;

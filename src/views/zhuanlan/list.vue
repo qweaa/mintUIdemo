@@ -2,59 +2,34 @@
 .app {
     padding-bottom: 46px;
 }
-
 .mint-loadmore-content ul li {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 5px solid #ddd;
     padding-left: 10px;
     padding-right: 10px;
 }
 
-.mint-loadmore-content ul li > a{
-    text-decoration: none;
-    color: #222;
-}
 .item-box {
+    margin-top: 10px;
     margin-bottom: 10px;
-    line-height: 18px;
+    line-height: 20px;
 }
-
+.item-box .box-top img{
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
 .item-box .box-header {
     overflow: hidden;
     margin-bottom: 10px;
 }
 
 .item-box .box-header>img {
-    border-radius: 10px;
-    float: left;
+    width: 100%;
 }
-
-.item-box .box-header .info {
-    position: relative;
-    padding-left: 10px;
-    padding-right: 10px;
-    height: 75px;
-    overflow: hidden;
-}
-/* .item-box .box-header .info:after {
-    content:"...";
-    position:absolute;
-    bottom:0;
-    right:0;
-    padding: 0 5px;
-    background-color: #fff;
-} */
-
-.item-box .box-header .info>p {
-    font-size: 12px;
-    color: #666;
-}
-
 .item-box .box-footer {
     font-size: 12px;
     color: #666;
 }
-
-.item-box .box-footer span {
+.item-box .box-footer span{
     margin-right: 15px;
 }
 
@@ -79,34 +54,56 @@
     line-height: 40px;
     font-size: 12px;
 }
+
+.columns-info{
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 5px solid #ddd;
+    text-align: center;
+}
+.columns-info .columns-img img{
+    border-radius: 50%;
+}
+.columns-info h1{
+    font-size: 14px;
+    line-height: 28px;
+}
+.columns-info p{
+    font-size: 12px;
+    color: #666;
+}
 </style>
 
 
 <template>
     <div class="app">
-        <v-header :title="title"></v-header>
+        <v-header :title="title" :showBack="true"></v-header>
         <mt-loadmore @load="initInfo()" :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
             <div slot="top" class="mint-loadmore-top">
                 <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
+            <div class="columns-info">
+                <div class="columns-img">
+                    <img :src="columnsImg" alt="">
+                </div>
+                <h1>{{columnsTitle}}</h1>
+                <p><span class="fa fa-user"></span> {{columnsFollow}}人关注</p>
+            </div>
             <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20">
                 <li v-for="(item, index) in list" :key="index">
-                    <router-link :to="{'path':'zhuanlanList',query:{'title':item.name,'page':item.slug,'columnsImg':'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg','follow':item.followersCount}}">
-                        <div class="item-box">
-                            <div class="box-header">
-                                <img :src="'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg'" alt="">
-                                <div class="info">
-                                    <h5>{{item.name}}</h5>
-                                    <p>{{item.description}}</p>
-                                </div>
-                            </div>
-                            <div class="box-footer">
-                                <span>{{item.followersCount}} 人关注</span>
-                                <span>{{item.postsCount}} 篇文章</span>
-                            </div>
+                    <div class="item-box">
+                        <div class="box-top">
+                            <img :src="'https://pic1.zhimg.com/'+item.author.avatar.id+'_s.jpg'" alt="">
+                            <span>{{item.author.name}}</span>
                         </div>
-                    </router-link>
+                        <div class="box-header">
+                            <img v-show="item.titleImage !== ''" :src="item.titleImage" alt="">
+                        </div>
+                        <div class="box-middle">
+                            <h5>{{item.title}}</h5>
+                        </div>
+                    </div>
                 </li>
             </ul>
             <div class="showNone" v-show="showNone">木有了...</div>
@@ -118,7 +115,7 @@
 </template>
 
 <script>
-import Header from './components/header';
+import Header from '../components/header';
 import axios from "axios";
 export default {
     data() {
@@ -130,7 +127,10 @@ export default {
             title: "专栏",
             limit: 20,
             offset: 0,
-            showNone: false
+            showNone: false,
+            columnsImg:this.$route.query.columnsImg,
+            columnsTitle: this.$route.query.title,
+            columnsFollow: this.$route.query.follow
         }
     },
     methods: {
@@ -149,16 +149,22 @@ export default {
         loadMore() {
             if (!this.showNone) {
                 this.loading = true;
-                axios.get("http://127.0.0.1:8888?m=default&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
-                    if (this.list.length === 0) {
-                        this.list = JSON.parse(data.data);
-                        this.offset += this.limit;
-                        this.limit = 10;
+                axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
+                    console.log(data.data)
+                    if (data.data.length === 0) {
                         this.loading = false;
+                        this.showNone = true;
                     } else {
-                        this.list = [...this.list, ...JSON.parse(data.data)];
-                        this.offset += this.limit;
-                        this.loading = false;
+                        if (this.list.length === 0) {
+                            this.list = data.data;
+                            this.offset += this.limit;
+                            this.limit = 10;
+                            this.loading = false;
+                        } else {
+                            this.list = [...this.list, ...data.data];
+                            this.offset += this.limit;
+                            this.loading = false;
+                        }
                     }
                 }).catch((err) => {
                     console.log(err)
@@ -170,10 +176,5 @@ export default {
         vHeader: Header
     }
 };
-var JSONP = document.createElement("script");
-JSONP.type = "text/javascript";
-JSONP.id = "aaa"
-JSONP.src = "https://zhuanlan.zhihu.com/api/recommendations/columns?limit=10&offset=0&seed=46&call=jsonpCallback";
-document.getElementsByTagName("head")[0].appendChild(JSONP);
 
 </script>

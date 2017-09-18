@@ -56,7 +56,7 @@
     <div class="header">
         <mt-header :title="title">
             <router-link to="/" slot="left" v-show="showBack">
-                <mt-button icon="back">back</mt-button>
+                <mt-button icon="back">返回</mt-button>
             </router-link>
             <div class="userImg" slot="right" @click="popupVisible = !popupVisible">
                 <img src="../../images/userDefault.jpg" alt="">
