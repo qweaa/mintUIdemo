@@ -1,27 +1,39 @@
 import Vue from 'vue';
-// import iView from 'iview';
 import MintUI from 'mint-ui'
 import VueRouter from 'vue-router';
-import Routers from './router';
+import Vuex from 'Vuex';
 
+import Routers from './router';
 import Util from './libs/util';
 import App from './app.vue';
-import Header from './views/components/header';
-import Footer from './views/components/footer';
 import Font from './css/font-awesome.min.css';
-// import 'iview/dist/styles/iview.css';
 import 'mint-ui/lib/style.css'
 import './css/common.css'
 
+import Header from './views/components/header';
+import Footer from './views/components/footer';
 
-// import zhihu from "zhihu";
+// import iView from 'iview';
+// import 'iview/dist/styles/iview.css';
 
 Vue.use(VueRouter);
-
-
+Vue.use(Vuex);
 Vue.use(MintUI);
 
-
+//初始化Vuex
+const store = new Vuex.Store({
+    state: {
+        zhuanlanData: []
+    },
+    mutations: {
+        setZhuanlanData : function(state,data) {
+                state.zhuanlanData = data
+        },
+        addZhuanlanData : function(state,data){
+            state.zhuanlanData = [...state.zhuanlanData, ...data]
+        }
+    }
+})
 
 // 路由配置
 const RouterConfig = {
@@ -46,6 +58,7 @@ router.afterEach(() => {
 new Vue({
     el: '#app',
     router: router,
+    store,
     render: h => h(App)
 });
 
@@ -57,5 +70,6 @@ new Vue({
 new Vue({
     el: '#footer',
     router: router,
+    store,
     render: h => h(Footer)
 });

@@ -91,7 +91,7 @@
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
             <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20">
-                <li v-for="(item, index) in list" :key="index">
+                <li v-for="(item, index) in zhuanlanData" :key="index">
                     <router-link :to="{'path':'zhuanlanList',query:{'title':item.name,'page':item.slug,'columnsImg':'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg','follow':item.followersCount}}">
                         <div class="item-box">
                             <div class="box-header">
@@ -109,7 +109,6 @@
                     </router-link>
                 </li>
             </ul>
-            <div class="showNone" v-show="showNone">木有了...</div>
             <div class="loadingAnimate">
                 <mt-spinner type="triple-bounce" v-show="loading" color="#26a2ff"></mt-spinner>
             </div>
@@ -123,14 +122,10 @@ import axios from "axios";
 export default {
     data() {
         return {
-            list: [],
             topStatus: '',
             allLoaded: false,
             loading: false,
             title: "专栏",
-            limit: 20,
-            offset: 0,
-            showNone: false
         }
     },
     methods: {
@@ -147,33 +142,49 @@ export default {
             location.reload();
         },
         loadMore() {
-            if (!this.showNone) {
-                this.loading = true;
-                axios.get("http://127.0.0.1:8888?m=default&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
-                    if (this.list.length === 0) {
-                        this.list = JSON.parse(data.data);
-                        this.offset += this.limit;
-                        this.limit = 10;
-                        this.loading = false;
-                    } else {
-                        this.list = [...this.list, ...JSON.parse(data.data)];
-                        this.offset += this.limit;
-                        this.loading = false;
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                })
-            }
+            this.loading = true;
+            axios.get("http://127.0.0.1:8888?m=default").then((data) => {
+                console.log(this.$store.state.zhuanlanData)
+                if (this.$store.state.zhuanlanData.length != 0) {
+                    this.$store.commit('addZhuanlanData',JSON.parse(data.data));
+                    this.loading = false;
+                } else {
+                    this.$store.commit('setZhuanlanData',JSON.parse(data.data));
+                    this.loading = false;
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+            //     this.loading = true;
+            //     axios.get("http://127.0.0.1:8888?m=default&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
+            //         if (this.list.length === 0) {
+            //             this.list = JSON.parse(data.data);
+            //             this.offset += this.limit;
+            //             this.limit = 10;
+            //             this.loading = false;
+            //         } else {
+            //             this.list = [...this.list, ...JSON.parse(data.data)];
+            //             this.offset += this.limit;
+            //             this.loading = false;
+            //         }
+            //     }).catch((err) => {
+            //         console.log(err)
+            //     })
+        }
+    },
+    computed: {
+        zhuanlanData : function(){
+            return this.$store.state.zhuanlanData;
         }
     },
     components: {
         vHeader: Header
     }
 };
-var JSONP = document.createElement("script");
-JSONP.type = "text/javascript";
-JSONP.id = "aaa"
-JSONP.src = "https://zhuanlan.zhihu.com/api/recommendations/columns?limit=10&offset=0&seed=46&call=jsonpCallback";
-document.getElementsByTagName("head")[0].appendChild(JSONP);
+// var JSONP = document.createElement("script");
+// JSONP.type = "text/javascript";
+// JSONP.id = "aaa"
+// JSONP.src = "https://zhuanlan.zhihu.com/api/recommendations/columns?limit=10&offset=0&seed=46&call=jsonpCallback";
+// document.getElementsByTagName("head")[0].appendChild(JSONP);
 
 </script>
