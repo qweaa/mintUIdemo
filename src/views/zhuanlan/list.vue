@@ -25,6 +25,15 @@
 .item-box .box-header>img {
     width: 100%;
 }
+.item-box .box-middle p{
+    overflow: hidden;
+    font-size: 12px;
+}
+.item-box .box-middle .time{
+    float: right;
+    color: #666;
+    margin-top: 15px;
+}
 .item-box .box-footer {
     font-size: 12px;
     color: #666;
@@ -78,19 +87,21 @@
 <template>
     <div class="app">
         <v-header :title="title" :showBack="true"></v-header>
-        <mt-loadmore @load="initInfo()" :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
+        <!-- <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange"> -->
+        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange">
             <div slot="top" class="mint-loadmore-top">
-                <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }"></mt-spinner>
+                <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
-            <div class="columns-info">
+            <!-- <div class="columns-info">
                 <div class="columns-img">
                     <img :src="columnsImg" alt="">
                 </div>
                 <h1>{{columnsTitle}}</h1>
                 <p><span class="fa fa-user"></span> {{columnsFollow}}人关注</p>
-            </div>
-            <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20">
+            </div> -->
+            <!-- <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20"> -->
+            <ul>
                 <li v-for="(item, index) in list" :key="index">
                     <div class="item-box">
                         <div class="box-top">
@@ -102,14 +113,22 @@
                         </div>
                         <div class="box-middle">
                             <h5>{{item.title}}</h5>
+                            <p>{{item.summary}}</p>
+                            <p><span class="time">{{setTime(item.publishedTime)}}</span></p>
                         </div>
                     </div>
                 </li>
             </ul>
-            <div class="showNone" v-show="showNone">木有了...</div>
+            <div slot="bottom" class="mint-loadmore-bottom">
+                <mt-spinner type="triple-bounce" v-show="bottomStatus !== 'loading'" color="#26a2ff"></mt-spinner>
+                <span v-show="bottomStatus === 'loading'">Loading...</span>
+                <!-- <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }"></mt-spinner> -->
+                <!-- <span v-show="topStatus === 'loading'">Loading...</span> -->
+            </div>
+            <!-- <div class="showNone" v-show="showNone">木有了...</div>
             <div class="loadingAnimate">
                 <mt-spinner type="triple-bounce" v-show="loading" color="#26a2ff"></mt-spinner>
-            </div>
+            </div> -->
         </mt-loadmore>
     </div>
 </template>
@@ -121,10 +140,11 @@ export default {
     data() {
         return {
             list: [],
-            topStatus: '',
+            topStatus: 'loading',
+            bottomStatus: '',
             allLoaded: false,
             loading: false,
-            title: "专栏",
+            title: this.$route.query.title,
             limit: 20,
             offset: 0,
             showNone: false,
@@ -137,14 +157,48 @@ export default {
         handleTopChange(status) {
             this.topStatus = status;
         },
+        handleBottomChange(status){
+            this.bottomStatus = status;
+        },
         loadTop() {
-            this.onTopLoaded();
+            console.log("loadTop")
+            axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
+                console.log(data.data)
+                if (data.data.length === 0) {
+                    this.loading = false;
+                    this.showNone = true;
+                } else {
+                    if (this.list.length === 0) {
+                        this.list = data.data;
+                        this.offset += this.limit;
+                        this.limit = 10;
+                        this.loading = false;
+                    } else {
+                        this.list = [...data.data, ...this.list];
+                        this.offset += this.limit;
+                        this.loading = false;
+                    }
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
         },
         loadBottom() {
+            console.log("loadBottom")
+            this.loadMore();
             this.allLoaded = true;// 若数据已全部获取完毕
         },
         onTopLoaded() {
-            location.reload();
+            this.list = [];
+            this.limit = 20;
+            this.offset = 0;
+            this.loadMore();
+            this.topStatus = true;
+            console.log(this.topStatus)
+        },
+        setTime(time) {
+            let times = new Date(time);
+            return times.toLocaleDateString() + ' ' + times.toLocaleTimeString()
         },
         loadMore() {
             if (!this.showNone) {
