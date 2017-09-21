@@ -25,7 +25,8 @@ http.createServer(function (request, response) {
             let params = url.parse(request.url, true).query;
             if (params.m === "zhuanlan") {
                 zhihu.Post.page(params.page, {
-                    limit: params.limit,
+                    // limit: params.limit,
+                    limit: 10,
                     offset: params.offset
                 }).then(function (list) {
                     response.end(JSON.stringify(list));

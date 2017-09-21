@@ -116,9 +116,9 @@
                 <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
-            <div slot="bottom" class="mint-loadmore-bottom">
-                <div class="showNone" v-show="!allLoaded">上拉刷新</div>
-            </div>
+             <div slot="bottom" class="mint-loadmore-bottom">
+                <div class="showNone">上拉刷新</div>
+            </div> 
             <div class="showNone" v-show="allLoaded">木有了...</div>
         </mt-loadmore>
     </div>
@@ -127,17 +127,18 @@
 <script>
 import Header from '../components/header';
 import axios from "axios";
+import {Toast} from "mint-ui";
 // var $ = require("../../vendors/jquery-3.2.1.js");
 import $ from "jq";
 export default {
     data() {
         return {
             list: [],
+            tmp: [],
             topStatus: '',
             bottomStatus: '',
             allLoaded: false,
             title: this.$route.query.title,
-            limit: 20,
             offset: 0,
             columnsImg:this.$route.query.columnsImg,
             columnsTitle: this.$route.query.title,
@@ -153,47 +154,38 @@ export default {
         },
         loadTop() {
             console.log("loadTop")
-            axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
-                console.log(data.data)
-                if (this.list.length === 0) {
-                    this.list = data.data;
-                    this.offset += this.limit;
-                    this.limit = 10;
-                } else {
-                    this.list = [...data.data, ...this.list];
-                    this.offset += this.limit;
-                }
-                $(".mint-loadmore-content").css("transform","translate3d(0px, 0px, 0px)");
-                this.handleTopChange("pull");
-                // $(".mint-loadmore-content").removeClass("is-dropped")
-            }).catch((err) => {
-                console.log(err)
-            })
+            this.loadMore(true,0);
         },
         loadBottom() {
             console.log("loadBottom")
-            this.loadMore();
-            console.log(this.allLoaded)
-            // this.allLoaded = true;// 若数据已全部获取完毕
+            this.loadMore(false,this.offset);
         },
         setTime(time) {
             let times = new Date(time);
             return times.toLocaleDateString() + ' ' + times.toLocaleTimeString()
         },
-        loadMore() {
-            axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
-                console.log(data.data)
-                if (data.data.length === 0) {
-                    this.allLoaded = true;
-                } else {
-                    if (this.list.length === 0) {
+        loadMore(code,offset) {
+            axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&offset=" + offset).then((data) => {
+                if(code){   //true: 顶部下拉刷新；false: 底部上拉刷新
+                    if(this.list.length == 0){
                         this.list = data.data;
-                        this.offset += this.limit;
-                        this.limit = 10;
-                        $(".app").css("padding-bottom",0)
+                        this.offset = 10;
+                    }else{
+                        let slug = this.list[0].slug;
+                        this.list = [];
+                        this.list = data.data;
+                        if(slug == data.data[0].slug) Toast('抱歉，没有更新的文章了~');
+                        this.offset = 10;
+                        $(".mint-loadmore-content").css("transform","none");
+                        $(".mint-loadmore-content").removeClass("is-dropped");
+                        this.handleTopChange("pull");
+                    }
+                }else{
+                    if (data.data.length === 0) {
+                        this.allLoaded = true;
                     } else {
                         this.list = [...this.list, ...data.data];
-                        this.offset += this.limit;
+                        this.offset += 10;
                     }
                 }
             }).catch((err) => {
@@ -202,7 +194,7 @@ export default {
         }
     },
     mounted(){
-        this.loadMore();
+        this.loadMore(true,0);
     },
     components: {
         vHeader: Header
