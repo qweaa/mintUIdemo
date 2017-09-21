@@ -67,9 +67,9 @@ new Vue({
 //     router: router,
 //     render: h => h(Header)
 // });
-new Vue({
-    el: '#footer',
-    router: router,
-    store,
-    render: h => h(Footer)
-});
+// new Vue({
+//     el: '#footer',
+//     router: router,
+//     store,
+//     render: h => h(Footer)
+// });
