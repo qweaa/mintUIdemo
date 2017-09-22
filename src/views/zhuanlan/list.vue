@@ -1,4 +1,8 @@
 <style scoped>
+a{
+    color: #222;
+    text-decoration: none;
+}
 .mint-loadmore-content ul li {
     border-bottom: 5px solid #ddd;
     padding-left: 10px;
@@ -62,10 +66,12 @@
 }
 
 .columns-info{
-    padding-top: 15px;
+    padding-top: 60px;
     padding-bottom: 15px;
-    border-bottom: 5px solid #ddd;
+    /* border-bottom: 5px solid #ddd; */
     text-align: center;
+    /* background-color: #eee; */
+    box-shadow: 0 1px 5px #666;
 }
 .columns-info .columns-img img{
     border-radius: 50%;
@@ -83,7 +89,7 @@
 
 <template>
     <div class="app" style="">
-        <v-header :title="title" :showBack="true"></v-header>
+        <v-header :title="title" :showBack="true" :fixed="true"></v-header>
         <!-- <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange"> -->
         <div class="columns-info">
             <div class="columns-img">
@@ -92,32 +98,35 @@
             <h1>{{columnsTitle}}</h1>
             <p><span class="fa fa-user"></span> {{columnsFollow}}人关注</p>
         </div>
-        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" ref="loadmore">
+        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange" ref="loadmore">
             <!-- <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20"> -->
             <ul>
                 <li v-for="(item, index) in list" :key="index">
-                    <div class="item-box">
-                        <div class="box-top">
-                            <img :src="'https://pic1.zhimg.com/'+item.author.avatar.id+'_s.jpg'" alt="">
-                            <span>{{item.author.name}}</span>
+                    <router-link :to="{path:'article',query:{slug:item.slug}}">
+                        <div class="item-box">
+                            <div class="box-top">
+                                <img :src="'https://pic1.zhimg.com/'+item.author.avatar.id+'_s.jpg'" alt="">
+                                <span>{{item.author.name}}</span>
+                            </div>
+                            <div class="box-header">
+                                <img v-show="item.titleImage !== ''" :src="item.titleImage" alt="">
+                            </div>
+                            <div class="box-middle">
+                                <h5>{{item.title}}</h5>
+                                <p>{{item.summary}}</p>
+                                <p><span class="time">{{setTime(item.publishedTime)}}</span></p>
+                            </div>
                         </div>
-                        <div class="box-header">
-                            <img v-show="item.titleImage !== ''" :src="item.titleImage" alt="">
-                        </div>
-                        <div class="box-middle">
-                            <h5>{{item.title}}</h5>
-                            <p>{{item.summary}}</p>
-                            <p><span class="time">{{setTime(item.publishedTime)}}</span></p>
-                        </div>
-                    </div>
+                    </router-link>
                 </li>
             </ul>
-            <div slot="top" class="mint-loadmore-top">
+            <div slot="top" class="mint-loadmore-top" :style="{marginTop : topStatus == 'success' ? '-100px' : '-50px'}">
                 <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
              <div slot="bottom" class="mint-loadmore-bottom">
-                <div class="showNone">上拉刷新</div>
+                <div class="showNone" v-show="!allLoaded && bottomStatus !== 'loading'">上拉刷新</div>
+                <mt-spinner type="triple-bounce" v-show="bottomStatus === 'loading'" color="#26A2FB"></mt-spinner>
             </div> 
             <div class="showNone" v-show="allLoaded">木有了...</div>
         </mt-loadmore>
@@ -148,9 +157,11 @@ export default {
     methods: {
         handleTopChange(status) {
             this.topStatus = status;
+            console.log(this.topStatus)
         },
         handleBottomChange(status){
             this.bottomStatus = status;
+            console.log(this.bottomStatus)
         },
         loadTop() {
             console.log("loadTop")
@@ -166,6 +177,7 @@ export default {
         },
         loadMore(code,offset) {
             axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&offset=" + offset).then((data) => {
+                console.log(data.data)
                 if(code){   //true: 顶部下拉刷新；false: 底部上拉刷新
                     if(this.list.length == 0){
                         this.list = data.data;
@@ -174,11 +186,11 @@ export default {
                         let slug = this.list[0].slug;
                         this.list = [];
                         this.list = data.data;
-                        if(slug == data.data[0].slug) Toast('抱歉，没有更新的文章了~');
+                        if(slug == data.data[0].slug){
+                            Toast('T_T 没有新文章了~');
+                            this.handleTopChange("success");
+                        }
                         this.offset = 10;
-                        $(".mint-loadmore-content").css("transform","none");
-                        $(".mint-loadmore-content").removeClass("is-dropped");
-                        this.handleTopChange("pull");
                     }
                 }else{
                     if (data.data.length === 0) {
@@ -186,6 +198,7 @@ export default {
                     } else {
                         this.list = [...this.list, ...data.data];
                         this.offset += 10;
+                        this.handleBottomChange("success");
                     }
                 }
             }).catch((err) => {
@@ -200,5 +213,8 @@ export default {
         vHeader: Header
     }
 };
-
+// var JSONP = document.createElement("script");
+// JSONP.type = "text/javascript";
+// JSONP.src = "https://zhuanlan.zhihu.com/api/posts/29053781";
+// document.getElementsByTagName("head")[0].appendChild(JSONP);
 </script>

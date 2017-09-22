@@ -32,7 +32,15 @@ http.createServer(function (request, response) {
                     response.end(JSON.stringify(list));
                 });
             }else if (params.m === "default") {
-                requestsss('https://zhuanlan.zhihu.com/api/recommendations/columns?limit=10', function (error, res, body) {
+                requestsss('https://zhuanlan.zhihu.com/api/recommendations/columns?limit=10', (error, res, body) => {
+                    if (!error && res.statusCode == 200) {
+                        response.end(JSON.stringify(body)); // 输出请求到的body
+                    }else{
+                        console.log(error)
+                    }
+                });
+            }else if(params.m === "article"){
+                requestsss('https://zhuanlan.zhihu.com/api/posts/'+params.slug, (error, res, body) => {
                     if (!error && res.statusCode == 200) {
                         response.end(JSON.stringify(body)); // 输出请求到的body
                     }else{

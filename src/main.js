@@ -27,10 +27,13 @@ const store = new Vuex.Store({
     },
     mutations: {
         setZhuanlanData : function(state,data) {
-                state.zhuanlanData = data
-        },
-        addZhuanlanData : function(state,data){
-            state.zhuanlanData = [...state.zhuanlanData, ...data]
+            if(data.code == "addTop"){
+                state.zhuanlanData = [...data.data, ...state.zhuanlanData];
+            }else if(data.code == "addBottom"){
+                state.zhuanlanData = [...state.zhuanlanData, ...data.data]
+            }else{
+                console.log("code参数应该为<string> set, addTop, addBttom")
+            }
         }
     }
 })

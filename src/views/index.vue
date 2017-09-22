@@ -85,12 +85,12 @@
 <template>
     <div class="app">
         <v-header :title="title"></v-header>
-        <mt-loadmore @load="initInfo()" :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
-            <div slot="top" class="mint-loadmore-top">
+        <mt-loadmore @load="initInfo()" :top-method="loadTop" @top-status-change="handleTopChange">
+            <div slot="top" class="mint-loadmore-top" :style="{marginTop : topStatus == 'success' ? '-100px' : '-50px'}">
                 <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
-            <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20">
+            <ul v-infinite-scroll="loadBottom" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20">
                 <li v-for="(item, index) in zhuanlanData" :key="index">
                     <router-link :to="{'path':'zhuanlanList',query:{'title':item.name,'page':item.slug,'columnsImg':'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg','follow':item.followersCount}}">
                         <div class="item-box">
@@ -133,43 +133,26 @@ export default {
             this.topStatus = status;
         },
         loadTop() {
-            this.onTopLoaded();
+            // location.reload();
+            this.loadMore("addTop");
         },
-        loadBottom() {
-            this.allLoaded = true;// 若数据已全部获取完毕
+        loadBottom(){
+            this.loadMore("addBottom");
         },
-        onTopLoaded() {
-            location.reload();
-        },
-        loadMore() {
+        loadMore(code) {
             this.loading = true;
             axios.get("http://127.0.0.1:8888?m=default").then((data) => {
-                console.log(this.$store.state.zhuanlanData)
-                if (this.$store.state.zhuanlanData.length != 0) {
-                    this.$store.commit('addZhuanlanData',JSON.parse(data.data));
-                    this.loading = false;
-                } else {
-                    this.$store.commit('setZhuanlanData',JSON.parse(data.data));
-                    this.loading = false;
-                }
+                    if(code == "addTop"){
+                        this.$store.commit('setZhuanlanData',{code:"addTop",data:JSON.parse(data.data)});
+                    }else if(code == "addBottom"){
+                        this.$store.commit('setZhuanlanData',{code:"addBottom",data:JSON.parse(data.data)});
+                    }
+                    this.handleTopChange("success");
+                    console.log(this.$store.state.zhuanlanData)
+                this.loading = false;
             }).catch((err) => {
                 console.log(err)
             })
-            //     this.loading = true;
-            //     axios.get("http://127.0.0.1:8888?m=default&limit=" + this.limit + "&offset=" + this.offset).then((data) => {
-            //         if (this.list.length === 0) {
-            //             this.list = JSON.parse(data.data);
-            //             this.offset += this.limit;
-            //             this.limit = 10;
-            //             this.loading = false;
-            //         } else {
-            //             this.list = [...this.list, ...JSON.parse(data.data)];
-            //             this.offset += this.limit;
-            //             this.loading = false;
-            //         }
-            //     }).catch((err) => {
-            //         console.log(err)
-            //     })
         }
     },
     computed: {

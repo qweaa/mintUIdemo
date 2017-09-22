@@ -54,7 +54,7 @@
 
 <template>
     <div class="header">
-        <mt-header :title="title">
+        <mt-header :title="title" :fixed="fixed">
             <router-link to="/" slot="left" v-show="showBack">
                 <mt-button icon="back">返回</mt-button>
             </router-link>
@@ -83,7 +83,7 @@ export default {
             isLogin: true
         }
     },
-    props: ["title","showBack"]
+    props: ["title","showBack","fixed"]
     // beforeRouteEnter(to, from, next) {
     //     this.title = to.meta.title;
     // },
