@@ -66,11 +66,13 @@
 
 .mint-loadmore-top {
     text-align: center;
+    vertical-align: middle;
 }
 
 .mint-loadmore-top span {
     display: inline-block;
     color: #26a2ff;
+    vertical-align: middle;
 }
 
 .showNone {
@@ -92,7 +94,8 @@
             </div>
             <ul v-infinite-scroll="loadBottom" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20">
                 <li v-for="(item, index) in zhuanlanData" :key="index">
-                    <router-link :to="{'path':'zhuanlanList',query:{'title':item.name,'page':item.slug,'columnsImg':'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg','follow':item.followersCount}}">
+                    <!-- <router-link :to="{'path':'zhuanlanList',query:{'title':item.name,'page':item.slug,'columnsImg':'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg','follow':item.followersCount}}"> -->
+                    <router-link :to="{'path':'zhuanlanList',query:{'slug':item.slug}}">
                         <div class="item-box">
                             <div class="box-header">
                                 <img :src="'https://pic4.zhimg.com/'+item.avatar.id+'_m.jpg'" alt="">
@@ -130,6 +133,7 @@ export default {
     },
     methods: {
         handleTopChange(status) {
+            console.log(status)
             this.topStatus = status;
         },
         loadTop() {
@@ -144,12 +148,12 @@ export default {
             axios.get("http://127.0.0.1:8888?m=default").then((data) => {
                     if(code == "addTop"){
                         this.$store.commit('setZhuanlanData',{code:"addTop",data:JSON.parse(data.data)});
+                        this.handleTopChange("success");
                     }else if(code == "addBottom"){
                         this.$store.commit('setZhuanlanData',{code:"addBottom",data:JSON.parse(data.data)});
                     }
-                    this.handleTopChange("success");
                     console.log(this.$store.state.zhuanlanData)
-                this.loading = false;
+                    this.loading = false;
             }).catch((err) => {
                 console.log(err)
             })

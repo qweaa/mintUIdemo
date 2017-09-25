@@ -64,25 +64,21 @@ a{
     line-height: 50px;
     font-size: 12px;
 }
-
-.columns-info{
-    padding-top: 60px;
-    padding-bottom: 15px;
-    /* border-bottom: 5px solid #ddd; */
+.column_header{
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    width: 100%;
+    height: 50px;
+}
+.column_header h1{
+    position: absolute;
+    top: 124px;
+    width: 100%;
     text-align: center;
-    /* background-color: #eee; */
-    box-shadow: 0 1px 5px #666;
-}
-.columns-info .columns-img img{
-    border-radius: 50%;
-}
-.columns-info h1{
-    font-size: 14px;
-    line-height: 28px;
-}
-.columns-info p{
-    font-size: 12px;
-    color: #666;
+    color: red;
+    font-size: 16px;
+    line-height: 50px;
 }
 </style>
 
@@ -90,14 +86,18 @@ a{
 <template>
     <div class="app" style="">
         <v-header :title="title" :showBack="true" :fixed="true"></v-header>
-        <!-- <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange"> -->
-        <div class="columns-info">
+        <!-- <div class="columns-info">
             <div class="columns-img">
                 <img :src="columnsImg" alt="">
             </div>
             <h1>{{columnsTitle}}</h1>
             <p><span class="fa fa-user"></span> {{columnsFollow}}人关注</p>
+        </div> -->
+        <div class="column_header">
+            <h1>专栏名称</h1>
         </div>
+        <list-header></list-header> 
+
         <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange" ref="loadmore">
             <!-- <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20"> -->
             <ul>
@@ -120,14 +120,14 @@ a{
                     </router-link>
                 </li>
             </ul>
-            <div slot="top" class="mint-loadmore-top" :style="{marginTop : topStatus == 'success' ? '-100px' : '-50px'}">
+             <div slot="top" class="mint-loadmore-top" :style="{marginTop : topStatus == 'success' ? '-100px' : '-50px'}">
                 <mt-spinner type="snake" color="#26a2ff" v-show="topStatus !== 'loading'"></mt-spinner>
                 <span v-show="topStatus === 'loading'">Loading...</span>
             </div>
              <div slot="bottom" class="mint-loadmore-bottom">
                 <div class="showNone" v-show="!allLoaded && bottomStatus !== 'loading'">上拉刷新</div>
                 <mt-spinner type="triple-bounce" v-show="bottomStatus === 'loading'" color="#26A2FB"></mt-spinner>
-            </div> 
+            </div>  
             <div class="showNone" v-show="allLoaded">木有了...</div>
         </mt-loadmore>
     </div>
@@ -135,6 +135,7 @@ a{
 
 <script>
 import Header from '../components/header';
+import listHeader from "./listHeader";
 import axios from "axios";
 import {Toast} from "mint-ui";
 // var $ = require("../../vendors/jquery-3.2.1.js");
@@ -147,21 +148,16 @@ export default {
             topStatus: '',
             bottomStatus: '',
             allLoaded: false,
-            title: this.$route.query.title,
+            title: '',
             offset: 0,
-            columnsImg:this.$route.query.columnsImg,
-            columnsTitle: this.$route.query.title,
-            columnsFollow: this.$route.query.follow
         }
     },
     methods: {
         handleTopChange(status) {
             this.topStatus = status;
-            console.log(this.topStatus)
         },
         handleBottomChange(status){
             this.bottomStatus = status;
-            console.log(this.bottomStatus)
         },
         loadTop() {
             console.log("loadTop")
@@ -176,8 +172,8 @@ export default {
             return times.toLocaleDateString() + ' ' + times.toLocaleTimeString()
         },
         loadMore(code,offset) {
-            axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.page+"&offset=" + offset).then((data) => {
-                console.log(data.data)
+            axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.slug+"&offset=" + offset).then((data) => {
+                console.log(data)
                 if(code){   //true: 顶部下拉刷新；false: 底部上拉刷新
                     if(this.list.length == 0){
                         this.list = data.data;
@@ -188,33 +184,69 @@ export default {
                         this.list = data.data;
                         if(slug == data.data[0].slug){
                             Toast('T_T 没有新文章了~');
-                            this.handleTopChange("success");
                         }
                         this.offset = 10;
                     }
+                    this.$refs.loadmore.onTopLoaded();
                 }else{
                     if (data.data.length === 0) {
                         this.allLoaded = true;
                     } else {
                         this.list = [...this.list, ...data.data];
                         this.offset += 10;
-                        this.handleBottomChange("success");
                     }
+                    this.$refs.loadmore.onBottomLoaded();
                 }
             }).catch((err) => {
                 console.log(err)
             })
+        },
+        getScroTop(){
+            return document.documentElement.scrollTop || document.body.scrollTop;
+        },
+        getViewHeight(){
+            return document.documentElement.clientHeight || document.body.clientHeight;
+        },
+        setColumnNameTop(){
+            if(this.getScroTop() < 124){
+                // if(this.getScroTop() < 100){
+                //     window.scrollTo(0,236)
+                // }
+                // if(parseInt($('.column_header h1').css("top")) <= 10){
+                //     $('.column_header h1').css("top", 0)
+                // }else{
+                    $('.column_header h1').css("top", 124 - this.getScroTop())
+                // }
+            }
         }
     },
     mounted(){
+        let that = this;
         this.loadMore(true,0);
+        let startX = 0;
+        window.touchstart = function(event){
+            console.log(that.getScroTop())
+            startX = event.clientX;
+        }
+        window.touchmove = function(event){
+            $('.column_header h1').css("top", startX - event.clientX >= 124 ? 0 : startX - event.clientX)
+        }
+        window.touchend = function(event){
+            if(startX - event.clientX > 0){
+                console.log(that.getScroTop())
+                if(that.getScroTop() > 124){
+                    $('.column_header h1').css("top", 0)
+                }
+            }
+        }
     },
     components: {
-        vHeader: Header
+        vHeader: Header,
+        listHeader : listHeader
     }
 };
 // var JSONP = document.createElement("script");
 // JSONP.type = "text/javascript";
-// JSONP.src = "https://zhuanlan.zhihu.com/api/posts/29053781";
+// JSONP.src = "https://www.zhihu.com/api/v4/members/guo.kai";
 // document.getElementsByTagName("head")[0].appendChild(JSONP);
 </script>

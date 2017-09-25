@@ -55,9 +55,9 @@
 <template>
     <div class="header">
         <mt-header :title="title" :fixed="fixed">
-            <router-link to="/" slot="left" v-show="showBack">
+            <span @click="back()" slot="left" v-show="showBack">
                 <mt-button icon="back">返回</mt-button>
-            </router-link>
+            </span>
             <div class="userImg" slot="right" @click="popupVisible = !popupVisible">
                 <img src="../../images/userDefault.jpg" alt="">
             </div>
@@ -74,13 +74,17 @@
     </div>
 </template>
 <script>
-
+import router from "vue-router"
 export default {
     data() {
         return {
-            // title: "",
             popupVisible: false,
             isLogin: true
+        }
+    },
+    methods:{
+        back(){
+            this.$router.back(-1)
         }
     },
     props: ["title","showBack","fixed"]
