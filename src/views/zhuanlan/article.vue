@@ -54,16 +54,17 @@
 .middle h1{
     font-size: 20px;
     line-height: 30px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 .middle h4{
     font-size: 16px;
     font-weight: 500;
     color: #666;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
-.middle h4 span{
+.middle h4 a{
     color: #333;
+    text-decoration: none;
 }
 /*视频*/
 .video-box{
@@ -120,7 +121,7 @@
                 </div>
             </div>
             <h1>{{articleTitle}}</h1>
-            <h4 v-show="column != ''">来自专栏 <span>{{column}}</span></h4>
+            <h4 v-show="column != ''">来自专栏 <router-link :to="{path:'zhuanlanList',query:{'slug':columnSlug}}">{{column}}</router-link></h4>
             <div class="article-content"></div>
             <div class="article-footer">
                 <p>发布于{{publishedTime}}</p>
@@ -146,6 +147,7 @@ export default {
             oImgs : [],         //初始化文章里的图片集合，用户懒加载
             bio : "",           //个性签名
             column : "",        //收录专栏
+            columnSlug : "",
             publishedTime : "", //文字文章发布时间
             lazyImgIndex : 0,   //初始化懒加载图片的位置
         }
@@ -160,6 +162,7 @@ export default {
                 console.log(article.column)
                 if(article.column){
                     this.column = article.column.name;
+                    this.columnSlug = article.column.slug;
                 }
                 $(".author-info img").attr("src",'https://pic3.zhimg.com/' + article.author.avatar.id + '_m.jpg');      //用户头像
                 if(article.titleImage != ""){           //如果有文章大图的就显示文章大图

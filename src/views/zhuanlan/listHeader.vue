@@ -3,10 +3,11 @@
 .columns-info{
     padding-top: 60px;
     padding-bottom: 15px;
-    /* border-bottom: 5px solid #ddd; */
     text-align: center;
-    /* background-color: #eee; */
     box-shadow: 0 1px 5px #666;
+    margin-right: -10px;
+    margin-bottom: 10px;
+    padding-right: 10px;
 }
 .columns-info .columns-img img{
     border-radius: 50%;
@@ -77,11 +78,18 @@ export default {
             console.log(JSON.parse(data.data))
             this.columnsImg = "https://pic2.zhimg.com/"+ column.avatar.id +"_m.jpg";         //获取头像
             this.columnsTitle = column.name;                //专栏名称
+            //向父级组件传递信息
+            this.sendTitle(this.columnsTitle);
             this.columnsFollow = column.followersCount;      //专栏关注数
             this.topics = column.topics;                    //话题
         }).catch((err) => {
             console.log(err)
         })
+    },
+    methods:{
+        sendTitle(msg){
+            this.$emit("listenToTitle",msg)
+        }
     }
 }
 </script>

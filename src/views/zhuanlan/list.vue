@@ -64,7 +64,7 @@ a{
     line-height: 50px;
     font-size: 12px;
 }
-.column_header{
+/* .column_header{
     position: fixed;
     z-index: 9999;
     top: 0;
@@ -79,27 +79,19 @@ a{
     color: red;
     font-size: 16px;
     line-height: 50px;
-}
+} */
 </style>
 
 
 <template>
     <div class="app" style="">
         <v-header :title="title" :showBack="true" :fixed="true"></v-header>
-        <!-- <div class="columns-info">
-            <div class="columns-img">
-                <img :src="columnsImg" alt="">
-            </div>
-            <h1>{{columnsTitle}}</h1>
-            <p><span class="fa fa-user"></span> {{columnsFollow}}人关注</p>
-        </div> -->
-        <div class="column_header">
+        <!-- <div class="column_header">
             <h1>专栏名称</h1>
-        </div>
-        <list-header></list-header> 
+        </div> -->
+        <list-header @listenToTitle="getChildData"></list-header> 
 
         <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" @bottom-status-change="handleBottomChange" ref="loadmore">
-            <!-- <ul v-infinite-scroll="loadMore" :infinite-scroll-disabled="!loading" infinite-scroll-distance="20"> -->
             <ul>
                 <li v-for="(item, index) in list" :key="index">
                     <router-link :to="{path:'article',query:{slug:item.slug}}">
@@ -129,6 +121,7 @@ a{
                 <mt-spinner type="triple-bounce" v-show="bottomStatus === 'loading'" color="#26A2FB"></mt-spinner>
             </div>  
             <div class="showNone" v-show="allLoaded">木有了...</div>
+            <div class="showNone" v-show="none">该专栏暂时没有文章！</div>
         </mt-loadmore>
     </div>
 </template>
@@ -138,7 +131,6 @@ import Header from '../components/header';
 import listHeader from "./listHeader";
 import axios from "axios";
 import {Toast} from "mint-ui";
-// var $ = require("../../vendors/jquery-3.2.1.js");
 import $ from "jq";
 export default {
     data() {
@@ -150,6 +142,7 @@ export default {
             allLoaded: false,
             title: '',
             offset: 0,
+            none: false,        //该专栏暂时没有文章
         }
     },
     methods: {
@@ -171,31 +164,38 @@ export default {
             let times = new Date(time);
             return times.toLocaleDateString() + ' ' + times.toLocaleTimeString()
         },
+        getChildData(data){
+            this.title = data;
+        },
         loadMore(code,offset) {
             axios.get("http://127.0.0.1:8888?m=zhuanlan&page="+this.$route.query.slug+"&offset=" + offset).then((data) => {
                 console.log(data)
                 if(code){   //true: 顶部下拉刷新；false: 底部上拉刷新
-                    if(this.list.length == 0){
-                        this.list = data.data;
-                        this.offset = 10;
+                    if (data.data.length === 0) {
+                        this.none = true;
                     }else{
-                        let slug = this.list[0].slug;
-                        this.list = [];
-                        this.list = data.data;
-                        if(slug == data.data[0].slug){
-                            Toast('T_T 没有新文章了~');
+                        if(this.list.length == 0){
+                            this.list = data.data;
+                            this.offset = 10;
+                        }else{
+                            let slug = this.list[0].slug;
+                            this.list = [];
+                            this.list = data.data;
+                            if(slug == data.data[0].slug){
+                                Toast('T_T 没有新文章了~');
+                            }
+                            this.offset = 10;
                         }
-                        this.offset = 10;
+                        this.$refs.loadmore.onTopLoaded();
                     }
-                    this.$refs.loadmore.onTopLoaded();
                 }else{
                     if (data.data.length === 0) {
                         this.allLoaded = true;
                     } else {
                         this.list = [...this.list, ...data.data];
                         this.offset += 10;
+                        this.$refs.loadmore.onBottomLoaded();
                     }
-                    this.$refs.loadmore.onBottomLoaded();
                 }
             }).catch((err) => {
                 console.log(err)
@@ -224,21 +224,21 @@ export default {
         let that = this;
         this.loadMore(true,0);
         let startX = 0;
-        window.touchstart = function(event){
-            console.log(that.getScroTop())
-            startX = event.clientX;
-        }
-        window.touchmove = function(event){
-            $('.column_header h1').css("top", startX - event.clientX >= 124 ? 0 : startX - event.clientX)
-        }
-        window.touchend = function(event){
-            if(startX - event.clientX > 0){
-                console.log(that.getScroTop())
-                if(that.getScroTop() > 124){
-                    $('.column_header h1').css("top", 0)
-                }
-            }
-        }
+        // window.touchstart = function(event){
+        //     console.log(that.getScroTop())
+        //     startX = event.clientX;
+        // }
+        // window.touchmove = function(event){
+        //     $('.column_header h1').css("top", startX - event.clientX >= 124 ? 0 : startX - event.clientX)
+        // }
+        // window.touchend = function(event){
+        //     if(startX - event.clientX > 0){
+        //         console.log(that.getScroTop())
+        //         if(that.getScroTop() > 124){
+        //             $('.column_header h1').css("top", 0)
+        //         }
+        //     }
+        // }
     },
     components: {
         vHeader: Header,
