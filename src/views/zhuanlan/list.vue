@@ -3,6 +3,9 @@ a{
     color: #222;
     text-decoration: none;
 }
+.mint-loadmore-content ul{
+    margin-top: 20px;
+}
 .mint-loadmore-content ul li {
     border-bottom: 5px solid #ddd;
     padding-left: 10px;

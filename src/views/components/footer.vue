@@ -14,7 +14,7 @@
 
 
 <template>
-    <mt-tabbar v-model="selected" :fixed="true">
+    <mt-tabbar v-model="selected" :fixed="true" v-show="isIndex">
         <mt-tab-item id="a">
             <router-link to="/">
                 <span class="fa fa-navicon"></span>专栏
@@ -41,7 +41,12 @@
 export default {
     data(){
         return {
-            selected:"a"
+            selected:"a",
+        }
+    },
+    computed:{
+        isIndex(){
+            return this.$store.state.isIndex;
         }
     }
 }

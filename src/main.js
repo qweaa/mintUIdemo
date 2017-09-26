@@ -23,7 +23,8 @@ Vue.use(MintUI);
 //初始化Vuex
 const store = new Vuex.Store({
     state: {
-        zhuanlanData: []
+        zhuanlanData: [],
+        isIndex : true,
     },
     mutations: {
         setZhuanlanData : function(state,data) {
@@ -34,6 +35,9 @@ const store = new Vuex.Store({
             }else{
                 console.log("code参数应该为<string> set, addTop, addBttom")
             }
+        },
+        setIsIndex : function(state,code){
+            state.isIndex = code;
         }
     }
 })
@@ -48,6 +52,12 @@ const router = new VueRouter(RouterConfig);
 router.beforeEach((to, from, next) => {
     // MintUI.LoadingBar.start();
     Util.title(to.meta.title);
+    console.log(to.path)
+    if(to.path != "/" && to.path != "/answer" && to.path != "/question" && to.path != "/comments"){
+        store.state.isIndex = false;
+    }else{
+        store.state.isIndex = true;
+    }
     next();
 });
 
@@ -70,9 +80,9 @@ new Vue({
 //     router: router,
 //     render: h => h(Header)
 // });
-// new Vue({
-//     el: '#footer',
-//     router: router,
-//     store,
-//     render: h => h(Footer)
-// });
+new Vue({
+    el: '#footer',
+    router: router,
+    store,
+    render: h => h(Footer)
+});

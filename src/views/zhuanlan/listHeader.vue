@@ -5,9 +5,6 @@
     padding-bottom: 15px;
     text-align: center;
     box-shadow: 0 1px 5px #666;
-    margin-right: -10px;
-    margin-bottom: 10px;
-    padding-right: 10px;
 }
 .columns-info .columns-img img{
     border-radius: 50%;
