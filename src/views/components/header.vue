@@ -75,6 +75,8 @@
 </template>
 <script>
 import router from "vue-router"
+import axios from "axios";
+
 export default {
     data() {
         return {
@@ -87,7 +89,27 @@ export default {
             this.$router.back(-1)
         }
     },
-    props: ["title","showBack","fixed"]
+    props: ["title","showBack","fixed"],
+    mounted(){
+        axios.get("http://127.0.0.1:9999?loginName=13729883532&password=0147258369qwe").then((data) => {
+            console.log(data);
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     // beforeRouteEnter(to, from, next) {
     //     this.title = to.meta.title;
     // },

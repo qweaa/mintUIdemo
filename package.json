@@ -17,11 +17,13 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.15.3",
+    "cheerio": "^1.0.0-rc.2",
     "express": "^4.15.4",
     "iview": "^2.0.0-rc.13",
     "jquery": "^3.2.1",
     "mint-ui": "^2.2.9",
     "request": "^2.81.0",
+    "superagent": "^3.6.0",
     "vue": "^2.2.6",
     "vue-router": "^2.3.1",
     "vuex": "^2.4.0",
