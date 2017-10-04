@@ -6,9 +6,9 @@
 
 ### 展示
 
-![首页·专栏](mintUIdemo/githubImg/index.jpg "首页·专栏")
-![专栏文章列表](mintUIdemo/githubImg/list.jpg "专栏文章列表")
-![专栏文章](mintUIdemo/githubImg/article.jpg "专栏文章")
+![首页·专栏](zhihu-zhuanLan-demo/raw/zhihuApi/githubImg/index.jpg "首页·专栏")
+![专栏文章列表](zhihu-zhuanLan-demo/raw/zhihuApi/githubImg/list.jpg "专栏文章列表")
+![专栏文章](zhihu-zhuanLan-demo/raw/zhihuApi/githubImg/article.jpg "专栏文章")
 
 ---
 
