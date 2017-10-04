@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import MintUI from 'mint-ui'
+import MintUI from 'mint-ui';
 import VueRouter from 'vue-router';
 import Vuex from 'Vuex';
 
@@ -7,8 +7,8 @@ import Routers from './router';
 import Util from './libs/util';
 import App from './app.vue';
 import Font from './css/font-awesome.min.css';
-import 'mint-ui/lib/style.css'
-import './css/common.css'
+import 'mint-ui/lib/style.css';
+import './css/common.css';
 
 import Header from './views/components/header';
 import Footer from './views/components/footer';
@@ -28,19 +28,19 @@ const store = new Vuex.Store({
     },
     mutations: {
         setZhuanlanData : function(state,data) {
-            if(data.code == "addTop"){
+            if(data.code == 'addTop'){
                 state.zhuanlanData = [...data.data, ...state.zhuanlanData];
-            }else if(data.code == "addBottom"){
-                state.zhuanlanData = [...state.zhuanlanData, ...data.data]
+            }else if(data.code == 'addBottom'){
+                state.zhuanlanData = [...state.zhuanlanData, ...data.data];
             }else{
-                console.log("code参数应该为<string> set, addTop, addBttom")
+                console.log('code参数应该为<string> set, addTop, addBttom');
             }
         },
         setIsIndex : function(state,code){
             state.isIndex = code;
         }
     }
-})
+});
 
 // 路由配置
 const RouterConfig = {
@@ -53,7 +53,7 @@ router.beforeEach((to, from, next) => {
     // MintUI.LoadingBar.start();
     Util.title(to.meta.title);
     //控制底部导航显示和隐藏
-    if(to.path != "/" && to.path != "/answer" && to.path != "/question" && to.path != "/comments"){
+    if(to.path != '/' && to.path != '/answer' && to.path != '/question' && to.path != '/comments'){
         store.state.isIndex = false;
     }else{
         store.state.isIndex = true;
