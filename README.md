@@ -6,9 +6,9 @@
 
 ### 展示
 
-![首页·专栏](zhihu-zhuanLan-demo/raw/zhihuApi/githubImg/index.jpg "首页·专栏")
-![专栏文章列表](zhihu-zhuanLan-demo/raw/zhihuApi/githubImg/list.jpg "专栏文章列表")
-![专栏文章](zhihu-zhuanLan-demo/raw/zhihuApi/githubImg/article.jpg "专栏文章")
+![首页·专栏](https://github.com/qweaa/zhihu-zhuanLan-demo/tree/zhihuApi/githubImg/index.jpg "首页·专栏")
+![专栏文章列表](https://github.com/qweaa/zhihu-zhuanLan-demo/tree/zhihuApi/githubImg/list.jpg "专栏文章列表")
+![专栏文章](https://github.com/qweaa/zhihu-zhuanLan-demo/tree/zhihuApi/githubImg/article.jpg "专栏文章")
 
 ---
 
