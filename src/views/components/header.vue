@@ -91,11 +91,13 @@ export default {
     },
     props: ["title","showBack","fixed"],
     mounted(){
-        axios.get("http://127.0.0.1:9999?loginName=13729883532&password=0147258369qwe").then((data) => {
-            console.log(data);
-        }).catch((err) => {
-            console.log(err)
-        })
+        //登陆的
+        // axios.get("http://127.0.0.1:9999?loginName=13729883532&password=0147258369qwe").then((data) => {
+        //     console.log(data.data.cookie);
+        //     console.log(JSON.parse(data.data.text))
+        // }).catch((err) => {
+        //     console.log(err)
+        // })
     }
 
 

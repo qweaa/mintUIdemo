@@ -31,7 +31,7 @@
 <template>
     <div class="app">
         <v-header :title="title"></v-header>
-        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange">
+        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" @top-status-change="handleTopChange" ref="loadmore">
             <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
                 <li v-for="(item, index) in list" :key="index">{{ item }}</li>
             </ul>
@@ -63,14 +63,22 @@ export default {
         },
         loadTop() {
             // 加载更多数据
-            // this.$refs.loadmore.onTopLoaded();
-            this.onTopLoaded();
+            setTimeout(() => {
+                let last = this.list[0];
+                for (let i = 1; i <= 10; i++) {
+                    this.list.unshift(last - i);
+                }
+                this.$refs.loadmore.onTopLoaded();
+            }, 2500);
+            
+            
         },
         loadBottom() {
             this.allLoaded = true;// 若数据已全部获取完毕
         },
-        onTopLoaded() {
-            location.reload();
+        onTopLoadeds() {
+            // location.reload();
+            this.$refs.loadmore.onTopLoaded();
         },
         loadMore() {
             this.loading = true;

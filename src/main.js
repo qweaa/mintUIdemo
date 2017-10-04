@@ -52,7 +52,7 @@ const router = new VueRouter(RouterConfig);
 router.beforeEach((to, from, next) => {
     // MintUI.LoadingBar.start();
     Util.title(to.meta.title);
-    console.log(to.path)
+    //控制底部导航显示和隐藏
     if(to.path != "/" && to.path != "/answer" && to.path != "/question" && to.path != "/comments"){
         store.state.isIndex = false;
     }else{
