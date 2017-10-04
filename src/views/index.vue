@@ -7,13 +7,16 @@
     border-bottom: 1px solid #ccc;
     padding-left: 10px;
     padding-right: 10px;
+    list-style: none;
 }
 
 .mint-loadmore-content ul li > a{
+    display: block;
     text-decoration: none;
     color: #222;
 }
 .item-box {
+    margin-top: 20px;
     margin-bottom: 10px;
     line-height: 18px;
 }
