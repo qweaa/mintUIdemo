@@ -10,6 +10,7 @@ a{
     border-bottom: 5px solid #ddd;
     padding-left: 10px;
     padding-right: 10px;
+    list-style: none;
 }
 
 .item-box {

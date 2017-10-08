@@ -7,11 +7,14 @@
     border-bottom: 1px solid #ccc;
     padding-left: 10px;
     padding-right: 10px;
+    list-style: none;
+    margin-top: 20px;
 }
 
 .mint-loadmore-content ul li > a{
     text-decoration: none;
     color: #222;
+    display: block;
 }
 .item-box {
     margin-bottom: 10px;
@@ -166,6 +169,9 @@ export default {
     },
     components: {
         vHeader: Header
+    },
+    mounted(){
+        console.log('1321321231')
     }
 };
 // var JSONP = document.createElement("script");
